@@ -1,0 +1,40 @@
+[project]
+requires-python = ">=3.12"
+name = "shield-backend"
+version = "0.1"
+description = "Shield Backend"
+dependencies = [
+  "fastapi",
+  "kopf",
+  "kubernetes",
+  "uvicorn",
+  "pydantic",
+  "pymongo",
+  "python-dotenv"
+]
+
+[project.optional-dependencies]
+dev = [
+  "black",
+  "ruff",
+  "pip-tools",
+  "ruff",
+  "validate-pyproject"
+]
+
+[tool.setuptools]
+py-modules = []
+
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+# Enable:
+# - Pycodestyle ("E")
+# - Pyflakes ("F")
+# - Pydocstyle ("D)
+# - flake8-bugbear ("B")
+# - Isort ("I")
+select = ["E", "F", "D", "B", "I"]
+ignore = ["D100","D101","D102","D103","D104","D107","D211", "D213", "D400", "D415"]
