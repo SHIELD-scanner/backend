@@ -38,7 +38,7 @@ dnspython==2.7.0
     # via pymongo
 durationpy==0.10
     # via kubernetes
-fastapi==0.115.13
+fastapi==0.115.14
     # via shield-backend (pyproject.toml)
 fastjsonschema==2.21.1
     # via validate-pyproject
