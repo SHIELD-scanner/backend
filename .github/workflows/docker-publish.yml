@@ -33,7 +33,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/shield-scanner/controller/shield-controller:latest
+          tags: ghcr.io/shield-scanner/backend/shield-backend:latest
 
       - name: Image digest
         run: echo "Image pushed with digest ${{ steps.docker_build.outputs.digest }}"
