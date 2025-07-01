@@ -61,7 +61,7 @@ kopf==1.38.0
     # via shield-backend (pyproject.toml)
 kubernetes==33.1.0
     # via shield-backend (pyproject.toml)
-multidict==6.6.2
+multidict==6.6.3
     # via
     #   aiohttp
     #   yarl
