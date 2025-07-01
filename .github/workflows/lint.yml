@@ -18,6 +18,6 @@ jobs:
         with:
           python-version: "3.13"
       - name: Install dev-requirements
-        run: pip install -r dev-requirements
+        run: pip install -r dev-requirements.txt
       - name: Run Ruff
         run: ruff check .
