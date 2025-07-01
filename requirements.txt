@@ -75,7 +75,7 @@ pydantic==2.11.7
     # via
     #   fastapi
     #   shield-backend (pyproject.toml)
-pydantic-core==2.35.2
+pydantic-core==2.33.2
     # via pydantic
 pymongo==4.13.2
     # via shield-backend (pyproject.toml)
@@ -103,7 +103,7 @@ six==1.17.0
     #   python-dateutil
 sniffio==1.3.1
     # via anyio
-starlette==0.47.1
+starlette==0.46.2
     # via fastapi
 typing-extensions==4.14.0
     # via
