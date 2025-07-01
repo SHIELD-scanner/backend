@@ -117,7 +117,7 @@ urllib3==2.5.0
     # via
     #   kubernetes
     #   requests
-uvicorn==0.34.3
+uvicorn==0.35.0
     # via shield-backend (pyproject.toml)
 websocket-client==1.8.0
     # via kubernetes
