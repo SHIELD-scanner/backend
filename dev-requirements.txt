@@ -20,7 +20,7 @@ black==25.1.0
     # via shield-backend (pyproject.toml)
 build==1.2.2.post1
     # via pip-tools
-cachetools==5.5.2
+cachetools==6.1.0
     # via google-auth
 certifi==2025.6.15
     # via
