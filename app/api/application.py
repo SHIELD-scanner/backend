@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Query
 
 from app.core.podClient import PodClient as PodClient
-from app.core.vulnerabilityClient import VulnerabilityClient as Vulnerabilitydb
+from app.core.old_vulnerabilityClient import VulnerabilityClient as Vulnerabilitydb
 
 router = APIRouter()
 

@@ -6,6 +6,7 @@ from app.api.application import router as application_router
 from app.api.health import router as health_router
 from app.api.namespace import router as namespace_router
 from app.api.pod import router as pod_router
+from app.api.vulnerability_old import router as vulnerability_old_router
 from app.api.vulnerability import router as vulnerability_router
 
 app = FastAPI(title="Trivy Ultimate Backend")
@@ -30,8 +31,13 @@ async def root():
 
 app.include_router(namespace_router, prefix="/namespaces", tags=["namespaces"])
 app.include_router(
-    vulnerability_router, prefix="/vulnerabilities-old", tags=["vulnerabilities"]
+    vulnerability_old_router, prefix="/vulnerabilities-old", tags=["vulnerabilities"]
 )
+
+app.include_router(
+    vulnerability_router, prefix="/vulnerabilities", tags=["vulnerabilities"]
+)
+
 app.include_router(pod_router, prefix="/pods", tags=["pods"])
 app.include_router(application_router, prefix="/application", tags=["application"])
 app.include_router(health_router, prefix="/health", tags=["health"])
