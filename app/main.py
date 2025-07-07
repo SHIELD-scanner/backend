@@ -30,7 +30,7 @@ async def root():
 
 app.include_router(namespace_router, prefix="/namespaces", tags=["namespaces"])
 app.include_router(
-    vulnerability_router, prefix="/vulnerabilities", tags=["vulnerabilities"]
+    vulnerability_router, prefix="/vulnerabilities-old", tags=["vulnerabilities"]
 )
 app.include_router(pod_router, prefix="/pods", tags=["pods"])
 app.include_router(application_router, prefix="/application", tags=["application"])
