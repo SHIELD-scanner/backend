@@ -7,12 +7,10 @@ from app.models.namespace import Namespace
 
 router = APIRouter()
 
+
 @router.get("/", response_model=List[Namespace])
 def list_namespaces(
-        cluster: Optional[str] = Query(None),
-    
+    cluster: Optional[str] = Query(None),
 ):
-    """List all Kubernetes namespaces in the cluster."""    
-    return db().get_all(
-        cluster=cluster
-    )
+    """List all Kubernetes namespaces in the cluster."""
+    return db().get_all(cluster=cluster)

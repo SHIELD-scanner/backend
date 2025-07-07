@@ -24,19 +24,13 @@ app.add_middleware(
 
 @app.get("/", include_in_schema=False)
 async def root():
-    return {
-        "message": "Welcome to the Trivy Ultimate Backend API. Visit /docs for API documentation."
-    }
+    return {"message": "Welcome to the Trivy Ultimate Backend API. Visit /docs for API documentation."}
 
 
 app.include_router(namespace_router, prefix="/namespaces", tags=["namespaces"])
-app.include_router(
-    vulnerability_old_router, prefix="/vulnerabilities-old", tags=["vulnerabilities"]
-)
+app.include_router(vulnerability_old_router, prefix="/vulnerabilities-old", tags=["vulnerabilities"])
 
-app.include_router(
-    vulnerability_router, prefix="/vulnerabilities", tags=["vulnerabilities"]
-)
+app.include_router(vulnerability_router, prefix="/vulnerabilities", tags=["vulnerabilities"])
 
 app.include_router(pod_router, prefix="/pods", tags=["pods"])
 app.include_router(application_router, prefix="/application", tags=["application"])

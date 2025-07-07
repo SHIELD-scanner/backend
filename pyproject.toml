@@ -17,13 +17,22 @@ dependencies = [
 dev = [
   "black",
   "ruff",
-  "pip-tools",
-  "ruff",
   "validate-pyproject"
 ]
 
-[tool.setuptools]
-py-modules = []
+[tool.uv]
+dev-dependencies = [
+  "black",
+  "ruff", 
+  "validate-pyproject"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
 
 
 [tool.ruff]

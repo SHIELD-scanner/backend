@@ -14,11 +14,7 @@ def sidebar(
     namespace: Optional[str] = Query(None),
 ):
     """List all vulnerabilities in the cluster."""
-    return {
-        "vulnerability_total": len(
-            Vulnerabilitydb().get_all(cluster=cluster, namespace=namespace)
-        )
-    }
+    return {"vulnerability_total": len(Vulnerabilitydb().get_all(cluster=cluster, namespace=namespace))}
 
 
 @router.get("/dashboard", response_model=dict)

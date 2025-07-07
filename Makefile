@@ -1,20 +1,30 @@
-PYTHON ?= python3
-VENV ?= .venv
+.PHONY: install sync run dev clean format lint check
 
-.PHONY: venv install run dev clean
+install:
+	uv sync
 
-venv:
-	$(PYTHON) -m venv $(VENV)
-
-install: venv
-	$(VENV)/bin/pip install --upgrade pip
-	$(VENV)/bin/pip install -r requirements.txt
+install-dev:
+	uv sync --dev
 
 run:
-	$(VENV)/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+	uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 dev:
-	$(VENV)/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level debug
+	uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level debug
+
+format:
+	uv run black app/
+	uv run ruff format app/
+
+lint:
+	uv run ruff check app/
+
+check:
+	uv run validate-pyproject pyproject.toml
 
 clean:
-	rm -rf $(VENV)
+	rm -rf .venv
+	rm -rf .ruff_cache
+	rm -rf shield_backend.egg-info/
+	rm -rf app/__pycache__/
+	rm -rf app/*/__pycache__/

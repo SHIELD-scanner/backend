@@ -6,4 +6,3 @@ class Pod(BaseModel):
     namespace: str = ""
     kind: str = ""
     cluster: str = ""
-

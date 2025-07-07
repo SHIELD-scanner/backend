@@ -22,15 +22,11 @@ class PodClient(DatabaseClient):
         return [self._format_to_pod(item) for item in items_list]
 
     def get_by_name(self, cluster: str, namespace: str, name: str):
-        item = self.get_collection().find_one(
-            {"name": name, "namespace": namespace, "cluster": cluster}, {"_id": 0}
-        )
+        item = self.get_collection().find_one({"name": name, "namespace": namespace, "cluster": cluster}, {"_id": 0})
         return self._format_to_pod(item)
 
     def get_by_namespace(self, cluster: str, namespace: str):
-        items = self.get_collection().find(
-            {"namespace": namespace, "cluster": cluster}, {"_id": 0}
-        )
+        items = self.get_collection().find({"namespace": namespace, "cluster": cluster}, {"_id": 0})
         items_list = list(items)
         return [self._format_to_pod(item) for item in items_list]
 

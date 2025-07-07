@@ -2,6 +2,7 @@ import os
 
 from pymongo import MongoClient
 
+
 class DatabaseClient:
     def __init__(self):
         self.client = MongoClient(os.getenv("MONGODB_URI", "mongodb://localhost:27017"))
