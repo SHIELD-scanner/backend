@@ -32,7 +32,7 @@ dnspython==2.7.0
     # via pymongo
 durationpy==0.10
     # via kubernetes
-fastapi==0.115.14
+fastapi==0.116.0
     # via shield-backend (pyproject.toml)
 frozenlist==1.7.0
     # via
