@@ -6,8 +6,8 @@ from app.api.application import router as application_router
 from app.api.health import router as health_router
 from app.api.namespace import router as namespace_router
 from app.api.pod import router as pod_router
-from app.api.vulnerability_old import router as vulnerability_old_router
 from app.api.vulnerability import router as vulnerability_router
+from app.api.vulnerability_old import router as vulnerability_old_router
 
 app = FastAPI(title="Trivy Ultimate Backend")
 
