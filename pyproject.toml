@@ -6,7 +6,6 @@ description = "Shield Backend"
 dependencies = [
   "fastapi",
   "kopf",
-  "kubernetes",
   "uvicorn",
   "pydantic",
   "pymongo",
