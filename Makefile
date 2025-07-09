@@ -1,26 +1,26 @@
 .PHONY: install sync run dev clean format lint check
 
 install:
-	uv sync
+	pip install -r requirements.txt
 
 install-dev:
-	uv sync --dev
+	pip install -r requirements-dev.txt
 
 run:
-	uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
+	python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 dev:
-	uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level debug
+	python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level debug
 
 format:
-	uv run black app/
-	uv run ruff format app/
+	python -m black app/
+	python -m ruff format app/
 
 lint:
-	uv run ruff check app/
+	python -m ruff check app/
 
 check:
-	uv run validate-pyproject pyproject.toml
+	python -m validate-pyproject pyproject.toml
 
 clean:
 	rm -rf .venv
