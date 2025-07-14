@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shield-backend
+  namespace: shield
+  labels:
+    app: shield-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shield-backend
+  template:
+    metadata:
+      labels:
+        app: shield-backend
+    spec:
+      serviceAccountName: shield-backend-sa
+      automountServiceAccountToken: false
+      containers:
+      - name: shield-backend
+        image: shield-backend:0.0.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: PYTHONDONTWRITEBYTECODE
+          valueFrom:
+            configMapKeyRef:
+              name: shield-backend-config
+              key: PYTHONDONTWRITEBYTECODE
+        - name: PYTHONUNBUFFERED
+          valueFrom:
+            configMapKeyRef:
+              name: shield-backend-config
+              key: PYTHONUNBUFFERED
+        # Add any additional environment variables from secrets or configmaps
+        # - name: DATABASE_URL
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: shield-backend-config
+        #       key: DATABASE_URL
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+            ephemeral-storage: "1Gi"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+            ephemeral-storage: "2Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shield-backend-service
+  namespace: shield
+  labels:
+    app: shield-backend
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: shield-backend
