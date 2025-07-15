@@ -61,6 +61,7 @@ deploy_k8s() {
     # Apply in order
     kubectl apply -f k8s/namespace.yaml
     kubectl apply -f k8s/rbac.yaml
+    kubectl apply -f k8s/secret.yaml
     kubectl apply -f k8s/configmap.yaml
     kubectl apply -f k8s/deployment.yaml
     kubectl apply -f k8s/ingress.yaml
