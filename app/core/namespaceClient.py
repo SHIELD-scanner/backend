@@ -23,9 +23,9 @@ class NamespaceClient(DatabaseClient):
     def _format_to_namespace(self, item):
         if "_id" in item:
             item["_id"] = str(item["_id"])
-        namespace = {
+        item = {
                 "cluster": item.get("_cluster", ""),
                 "name": item.get("_name", ""),
                 "_uid": item.get("_uid", ""),
             }
-        return Namespace(**namespace) if namespace else None
+        return Namespace(**item) if item else None
