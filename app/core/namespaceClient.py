@@ -1,7 +1,6 @@
 import os
 
 from app.core.databaseClient import DatabaseClient
-from app.models import namespace
 from app.models.namespace import Namespace
 
 
@@ -23,9 +22,9 @@ class NamespaceClient(DatabaseClient):
     def _format_to_namespace(self, item):
         if "_id" in item:
             item["_id"] = str(item["_id"])
-        item = {
+        namespace = {
                 "cluster": item.get("_cluster", ""),
                 "name": item.get("_name", ""),
                 "_uid": item.get("_uid", ""),
             }
-        return Namespace(**item) if item else None
+        return Namespace(**namespace) if namespace else None
