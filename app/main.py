@@ -12,7 +12,7 @@ from app.api.vulnerability_old import router as vulnerability_old_router
 
 import sentry_sdk
 
-sentry_dsn = os.getenv("SENTRY_DSN")
+sentry_dsn = os.getenv("DSN")
 if sentry_dsn:
     sentry_sdk.init(
         dsn=sentry_dsn,
@@ -54,6 +54,6 @@ app.include_router(pod_router, prefix="/pods", tags=["pods"])
 app.include_router(application_router, prefix="/application", tags=["application"])
 app.include_router(health_router, prefix="/health", tags=["health"])
 
-@app.get("/sentry-debug")
-async def trigger_error():
-    division_by_zero = 1 / 0
+# @app.get("/sentry-debug")
+# async def trigger_error():
+#     division_by_zero = 1 / 0
