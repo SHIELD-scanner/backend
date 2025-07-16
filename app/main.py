@@ -53,3 +53,7 @@ app.include_router(
 app.include_router(pod_router, prefix="/pods", tags=["pods"])
 app.include_router(application_router, prefix="/application", tags=["application"])
 app.include_router(health_router, prefix="/health", tags=["health"])
+
+@app.get("/sentry-debug")
+async def trigger_error():
+    division_by_zero = 1 / 0
