@@ -1,4 +1,6 @@
 import os
+
+import sentry_sdk
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,8 +11,6 @@ from app.api.namespace import router as namespace_router
 from app.api.pod import router as pod_router
 from app.api.vulnerability import router as vulnerability_router
 from app.api.vulnerability_old import router as vulnerability_old_router
-
-import sentry_sdk
 
 sentry_dsn = os.getenv("DSN")
 if sentry_dsn:
