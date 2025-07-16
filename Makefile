@@ -1,4 +1,4 @@
-.PHONY: install sync run dev clean format lint check docker-build docker-run k8s-deploy k8s-undeploy k8s-status k8s-logs k8s-port-forward
+.PHONY: install sync run dev clean format lint check docker-build docker-run k8s-deploy k8s-deploy-secure k8s-undeploy k8s-status k8s-logs k8s-port-forward
 
 install:
 	pip install -r requirements.txt
@@ -52,6 +52,17 @@ k8s-deploy-registry:
 k8s-undeploy:
 	@echo "🗑️  Removing deployment from Kubernetes..."
 	kubectl delete -f k8s/ --ignore-not-found=true
+
+k8s-deploy-secure:
+	@echo "🔐 Deploying to Kubernetes with secrets..."
+	kubectl apply -f k8s/namespace.yaml
+	kubectl apply -f k8s/rbac.yaml
+	kubectl apply -f k8s/secret.yaml
+	kubectl apply -f k8s/configmap.yaml
+	kubectl apply -f k8s/deployment-with-secrets.yaml
+	kubectl apply -f k8s/ingress.yaml
+	@echo "⏳ Waiting for deployment to be ready..."
+	kubectl wait --for=condition=available --timeout=300s deployment/shield-backend -n shield
 
 k8s-status:
 	@echo "📊 Checking deployment status..."

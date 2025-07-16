@@ -71,30 +71,37 @@ Add environment variables in `k8s/configmap.yaml`:
 
 ```yaml
 data:
-  DATABASE_URL: "mongodb://mongo-service:27017/shield"
+  MONGODB_DB: "shield"
   LOG_LEVEL: "info"
   # Add more as needed
 ```
 
 ### Secrets
 
-For sensitive data, create a secret:
+For sensitive data like database credentials, we use secrets. The MongoDB URI is stored in `k8s/secret.yaml`:
+
+```yaml
+stringData:
+  mongodb-uri: "mongodb://username:password@mongo-1.shield.svc.cluster.local:32017/"
+```
+
+To update the MongoDB credentials:
+
+```bash
+# Edit the secret file
+kubectl edit secret shield-backend-secret --namespace=shield
+
+# Or delete and recreate
+kubectl delete secret shield-backend-secret --namespace=shield
+kubectl apply -f k8s/secret.yaml
+```
+
+For other sensitive data, create additional secrets:
 
 ```bash
 kubectl create secret generic shield-backend-secret \
-  --from-literal=database-password=your-password \
+  --from-literal=api-key=your-api-key \
   --namespace=shield
-```
-
-Then reference it in the deployment:
-
-```yaml
-env:
-- name: DATABASE_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: shield-backend-secret
-      key: database-password
 ```
 
 ### Resource Limits
