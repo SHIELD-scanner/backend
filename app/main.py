@@ -1,3 +1,6 @@
+import os
+
+import sentry_sdk
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,6 +11,15 @@ from app.api.namespace import router as namespace_router
 from app.api.pod import router as pod_router
 from app.api.vulnerability import router as vulnerability_router
 from app.api.vulnerability_old import router as vulnerability_old_router
+
+sentry_dsn = os.getenv("DSN")
+if sentry_dsn:
+    sentry_sdk.init(
+        dsn=sentry_dsn,
+        # Add data like request headers and IP for users,
+        # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+        send_default_pii=True,
+    )
 
 app = FastAPI(title="Trivy Ultimate Backend")
 
@@ -24,14 +36,24 @@ app.add_middleware(
 
 @app.get("/", include_in_schema=False)
 async def root():
-    return {"message": "Welcome to the Trivy Ultimate Backend API. Visit /docs for API documentation."}
+    return {
+        "message": "Welcome to the Trivy Ultimate Backend API. Visit /docs for API documentation."
+    }
 
 
 app.include_router(namespace_router, prefix="/namespaces", tags=["namespaces"])
-app.include_router(vulnerability_old_router, prefix="/vulnerabilities-old", tags=["vulnerabilities"])
+app.include_router(
+    vulnerability_old_router, prefix="/vulnerabilities-old", tags=["vulnerabilities"]
+)
 
-app.include_router(vulnerability_router, prefix="/vulnerabilities", tags=["vulnerabilities"])
+app.include_router(
+    vulnerability_router, prefix="/vulnerabilities", tags=["vulnerabilities"]
+)
 
 app.include_router(pod_router, prefix="/pods", tags=["pods"])
 app.include_router(application_router, prefix="/application", tags=["application"])
 app.include_router(health_router, prefix="/health", tags=["health"])
+
+# @app.get("/sentry-debug")
+# async def trigger_error():
+#     division_by_zero = 1 / 0

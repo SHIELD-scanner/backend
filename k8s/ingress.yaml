@@ -18,6 +18,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: shield-backend-service
+            name: shield-backend
             port:
               number: 80

@@ -9,7 +9,8 @@ dependencies = [
   "uvicorn",
   "pydantic",
   "pymongo",
-  "python-dotenv"
+  "python-dotenv",
+  "sentry-sdk[fastapi]"
 ]
 
 [project.optional-dependencies]

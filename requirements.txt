@@ -16,6 +16,8 @@ anyio==4.9.0
     # via starlette
 attrs==25.3.0
     # via aiohttp
+certifi==2025.7.14
+    # via sentry-sdk
 click==8.2.1
     # via
     #   kopf
@@ -23,7 +25,9 @@ click==8.2.1
 dnspython==2.7.0
     # via pymongo
 fastapi==0.116.1
-    # via shield-backend (pyproject.toml)
+    # via
+    #   sentry-sdk
+    #   shield-backend (pyproject.toml)
 frozenlist==1.7.0
     # via
     #   aiohttp
@@ -60,9 +64,11 @@ python-json-logger==3.3.0
     # via kopf
 pyyaml==6.0.2
     # via kopf
+sentry-sdk[fastapi]==2.33.0
+    # via shield-backend (pyproject.toml)
 sniffio==1.3.1
     # via anyio
-starlette==0.46.2
+starlette==0.47.1
     # via fastapi
 typing-extensions==4.14.1
     # via
@@ -72,6 +78,8 @@ typing-extensions==4.14.1
     #   typing-inspection
 typing-inspection==0.4.1
     # via pydantic
+urllib3==2.5.0
+    # via sentry-sdk
 uvicorn==0.35.0
     # via shield-backend (pyproject.toml)
 yarl==1.20.1
