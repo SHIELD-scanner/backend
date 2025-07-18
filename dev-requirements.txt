@@ -73,7 +73,7 @@ python-json-logger==3.3.0
     # via kopf
 pyyaml==6.0.2
     # via kopf
-ruff==0.12.3
+ruff==0.12.4
     # via shield-backend (pyproject.toml)
 sniffio==1.3.1
     # via anyio
