@@ -64,7 +64,7 @@ python-json-logger==3.3.0
     # via kopf
 pyyaml==6.0.2
     # via kopf
-sentry-sdk[fastapi]==2.33.0
+sentry-sdk[fastapi]==2.33.2
     # via shield-backend (pyproject.toml)
 sniffio==1.3.1
     # via anyio
