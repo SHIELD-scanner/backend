@@ -36,8 +36,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/shield-scanner/backend/shield-backend:${{ steps.vars.outputs.VERSION }}
-            ghcr.io/shield-scanner/backend/shield-backend:latest
+            ghcr.io/shield-scanner/shield-backend/shield-backend:${{ steps.vars.outputs.VERSION }}
+            ghcr.io/shield-scanner/shield-backend/shield-backend:latest
 
       - name: Image digest
         run: echo "Image pushed with digest ${{ steps.docker_build.outputs.digest }}"
