@@ -13,18 +13,27 @@ from app.api.pod import router as pod_router
 from app.api.vulnerability import router as vulnerability_router
 from app.api.vulnerability_old import router as vulnerability_old_router
 
+# Load environment variables first
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
+
+# Initialize Sentry after loading environment variables
 sentry_dsn = os.getenv("SENTRY_DSN")
 if sentry_dsn:
     sentry_sdk.init(
         dsn=sentry_dsn,
+        # Set a higher sample rate for debugging
+        traces_sample_rate=1.0,
         # Add data like request headers and IP for users,
         # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
         send_default_pii=True,
+        # Enable debug mode to see what's happening
+        debug=True,
     )
+    print(f"Sentry initialized with DSN: {sentry_dsn[:50]}...")
+else:
+    print("Warning: SENTRY_DSN not found in environment variables")
 
 app = FastAPI(title="Trivy Ultimate Backend")
-
-load_dotenv()
 
 app.add_middleware(
     CORSMiddleware,
