@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.application import router as application_router
 from app.api.health import router as health_router
+from app.api.sentry import router as sentry_router
 from app.api.namespace import router as namespace_router
 from app.api.pod import router as pod_router
 from app.api.vulnerability import router as vulnerability_router
@@ -53,7 +54,4 @@ app.include_router(
 app.include_router(pod_router, prefix="/pods", tags=["pods"])
 app.include_router(application_router, prefix="/application", tags=["application"])
 app.include_router(health_router, prefix="/health", tags=["health"])
-
-# @app.get("/sentry-debug")
-# async def trigger_error():
-#     division_by_zero = 1 / 0
+app.include_router(sentry_router, prefix="/sentry", tags=["sentry"])
