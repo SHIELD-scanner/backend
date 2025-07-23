@@ -8,6 +8,10 @@ ENV PYTHONUNBUFFERED=1
 # Set work directory
 WORKDIR /app
 
+RUN apk update && \
+    apk add --no-cache \
+    && rm -rf /var/cache/apk/*
+
 
 # Copy dependency files
 COPY requirements.txt ./
@@ -20,6 +24,16 @@ COPY . /app/
 
 # Install the project
 RUN pip install -e .
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup
+
+# Change ownership of app directory to non-root user
+RUN chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
 
 # Expose the port FastAPI runs on
 EXPOSE 8000
