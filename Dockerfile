@@ -9,6 +9,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 RUN apk update && \
+    apk upgrade sqlite-libs && \
     apk add --no-cache \
     && rm -rf /var/cache/apk/*
 
