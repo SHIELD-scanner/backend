@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class Exposedsecret(BaseModel):
+class ExposedSecret(BaseModel):
     uid: str = ""
     namespace: str = ""
     cluster: str = ""

@@ -13,13 +13,18 @@ aiosignal==1.4.0
 annotated-types==0.7.0
     # via pydantic
 anyio==4.9.0
-    # via starlette
+    # via
+    #   httpx
+    #   starlette
 attrs==25.3.0
     # via aiohttp
 black==25.1.0
     # via shield-backend (pyproject.toml)
 certifi==2025.7.14
-    # via sentry-sdk
+    # via
+    #   httpcore
+    #   httpx
+    #   sentry-sdk
 click==8.2.1
     # via
     #   black
@@ -38,14 +43,25 @@ frozenlist==1.7.0
     #   aiohttp
     #   aiosignal
 h11==0.16.0
-    # via uvicorn
+    # via
+    #   httpcore
+    #   uvicorn
+httpcore==1.0.9
+    # via httpx
+httpx==0.28.1
+    # via shield-backend (pyproject.toml)
 idna==3.10
     # via
     #   anyio
+    #   httpx
     #   yarl
+iniconfig==2.1.0
+    # via pytest
 iso8601==2.1.0
     # via kopf
 kopf==1.38.0
+    # via shield-backend (pyproject.toml)
+mongomock==4.3.0
     # via shield-backend (pyproject.toml)
 multidict==6.6.3
     # via
@@ -54,11 +70,16 @@ multidict==6.6.3
 mypy-extensions==1.1.0
     # via black
 packaging==25.0
-    # via black
+    # via
+    #   black
+    #   mongomock
+    #   pytest
 pathspec==0.12.1
     # via black
 platformdirs==4.3.8
     # via black
+pluggy==1.6.0
+    # via pytest
 propcache==0.3.2
     # via
     #   aiohttp
@@ -69,16 +90,31 @@ pydantic==2.11.7
     #   shield-backend (pyproject.toml)
 pydantic-core==2.33.2
     # via pydantic
+pygments==2.19.2
+    # via pytest
 pymongo==4.13.2
+    # via shield-backend (pyproject.toml)
+pytest==8.4.1
+    # via
+    #   pytest-asyncio
+    #   pytest-mock
+    #   shield-backend (pyproject.toml)
+pytest-asyncio==1.1.0
+    # via shield-backend (pyproject.toml)
+pytest-mock==3.14.1
     # via shield-backend (pyproject.toml)
 python-dotenv==1.1.1
     # via shield-backend (pyproject.toml)
 python-json-logger==3.3.0
     # via kopf
+pytz==2025.2
+    # via mongomock
 pyyaml==6.0.2
     # via kopf
-ruff==0.12.4
+ruff==0.12.5
     # via shield-backend (pyproject.toml)
+sentinels==1.0.0
+    # via mongomock
 sentry-sdk==2.33.2
     # via shield-backend (pyproject.toml)
 sniffio==1.3.1

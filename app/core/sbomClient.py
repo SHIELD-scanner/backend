@@ -1,7 +1,7 @@
 import os
 
 from app.core.databaseClient import DatabaseClient
-from app.models.sbom import Sbom
+from app.models.sbom import SBOM
 
 
 class SbomClient(DatabaseClient):
@@ -19,47 +19,19 @@ class SbomClient(DatabaseClient):
             query["_cluster"] = cluster
 
         items = self.get_collection().find(query, {"_id": 0})
-        print(items)
-        items_list = list(items)
-
-        all_items = []
-        for item in items_list:
-            sbom = self._format(item)
-            if isinstance(sbom, list):
-                all_items.extend(sbom)
-            elif sbom is not None:
-                all_items.append(sbom)
-
-        return all_items
+        formatted_items = (self._format(item) for item in items)
+        return [item for item in formatted_items if item is not None]
 
     def get_by_uid(self, uid: str):
-
         item = self.get_collection().find_one({"_uid": uid}, {"_id": 0})
-
-        if item:
-            sbom = self._format(item)
-            if isinstance(sbom, list):
-                # If _format returns a list, find the item with matching uid
-                for s in sbom:
-                    if s.uid == uid:
-                        return s
-            else:
-                return sbom
-
-        return None
+        return self._format(item)
 
     def _format(self, item):
         if item is None:
             return None
 
-        return (
-            Sbom(
-                **{
-                    "uid": item.get("_uid", ""),
-                    "namespace": item.get("_namespace", ""),
-                    "cluster": item.get("_cluster", ""),
-                }
-            )
-            if item
-            else None
+        return SBOM(
+            uid=item.get("_uid", ""),
+            namespace=item.get("_namespace", ""),
+            cluster=item.get("_cluster", ""),
         )

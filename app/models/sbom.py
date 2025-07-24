@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class Sbom(BaseModel):
+class SBOM(BaseModel):
     uid: str = ""
     namespace: str = ""
     cluster: str = ""
