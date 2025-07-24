@@ -1,10 +1,9 @@
 """Unit tests for Namespace model."""
-import pytest
-from pydantic import ValidationError
 from app.models.namespace import Namespace
 
 
 class TestNamespace:
+
     """Test cases for Namespace model."""
 
     def test_namespace_creation_with_all_fields(self):

@@ -1,10 +1,9 @@
 """Unit tests for ExposedSecret model."""
-import pytest
-from pydantic import ValidationError
 from app.models.exposedsecret import ExposedSecret
 
 
 class TestExposedSecret:
+
     """Test cases for ExposedSecret model."""
 
     def test_exposed_secret_creation_with_all_fields(self):

@@ -2,83 +2,83 @@ name: Deploy
 
 on:
   push:
-    branches: [ main ]
-    tags: [ 'v*.*.*' ]
+    branches: [main]
+    tags: ["v*.*.*"]
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment'
+        description: "Deployment environment"
         required: true
-        default: 'staging'
+        default: "staging"
         type: choice
         options:
-        - staging
-        - production
+          - staging
+          - production
 
 jobs:
   test-before-deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -e .
-        pip install pytest pytest-asyncio httpx pytest-mock mongomock pytest-cov
-    
-    - name: Run full test suite
-      env:
-        MONGODB_DB: shield_deploy_test
-        SENTRY_DSN: ""
-      run: |
-        pytest tests/ -v --tb=short --cov=app --cov-report=term-missing
-        echo "✅ All tests passed before deployment"
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest pytest-asyncio httpx pytest-mock mongomock pytest-cov
+
+      - name: Run full test suite
+        env:
+          MONGODB_DB: shield_deploy_test
+          SENTRY_DSN: ""
+        run: |
+          pytest tests/ -v --tb=short --cov=app --cov-report=term-missing
+          echo "✅ All tests passed before deployment"
 
   build-and-push:
     needs: test-before-deploy
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-    
-    - name: Log in to Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Extract metadata
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
-        images: ghcr.io/${{ github.repository }}
-        tags: |
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=sha,prefix=sha-
-    
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        platforms: linux/amd64,linux/arm64
-        push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix=sha-
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy-staging:
     needs: build-and-push
@@ -86,12 +86,12 @@ jobs:
     if: github.ref == 'refs/heads/main'
     environment: staging
     steps:
-    - name: Deploy to staging
-      run: |
-        echo "🚀 Deploying to staging environment..."
-        echo "Image: ghcr.io/${{ github.repository }}:main"
-        # Add your staging deployment commands here
-        echo "✅ Deployment to staging completed"
+      - name: Deploy to staging
+        run: |
+          echo "🚀 Deploying to staging environment..."
+          echo "Image: ghcr.io/${{ github.repository }}:main"
+          # Add your staging deployment commands here
+          echo "✅ Deployment to staging completed"
 
   deploy-production:
     needs: build-and-push
@@ -99,9 +99,9 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     environment: production
     steps:
-    - name: Deploy to production
-      run: |
-        echo "🚀 Deploying to production environment..."
-        echo "Image: ghcr.io/${{ github.repository }}:${{ github.ref_name }}"
-        # Add your production deployment commands here
-        echo "✅ Deployment to production completed"
+      - name: Deploy to production
+        run: |
+          echo "🚀 Deploying to production environment..."
+          echo "Image: ghcr.io/${{ github.repository }}:${{ github.ref_name }}"
+          # Add your production deployment commands here
+          echo "✅ Deployment to production completed"

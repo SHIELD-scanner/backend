@@ -14,8 +14,8 @@ class NamespaceClient(DatabaseClient):
     def get_all(self, cluster: str = None):
         query = {}
         if cluster:
-            query["cluster"] = cluster
-        
+            query["_cluster"] = cluster
+
         items = self.get_collection().find(query, {"_id": 0})
         formatted_items = (self._format_to_namespace(item) for item in items)
         return [item for item in formatted_items if item is not None]
@@ -23,10 +23,10 @@ class NamespaceClient(DatabaseClient):
     def _format_to_namespace(self, item):
         if item is None:
             return None
-            
+
         if "_id" in item:
             item["_id"] = str(item["_id"])
-            
+
         return Namespace(
             cluster=item.get("_cluster", ""),
             name=item.get("_name", ""),

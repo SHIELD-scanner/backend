@@ -1,10 +1,9 @@
 """Unit tests for Pod model."""
-import pytest
-from pydantic import ValidationError
 from app.models.pod import Pod
 
 
 class TestPod:
+
     """Test cases for Pod model."""
 
     def test_pod_creation_with_minimal_fields(self):

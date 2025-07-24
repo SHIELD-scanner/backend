@@ -17,17 +17,21 @@ class PodClient(DatabaseClient):
             query["namespace"] = namespace
         if cluster:
             query["cluster"] = cluster
-            
+
         items = self.get_collection().find(query, {"_id": 0})
         formatted_items = (self._format_to_pod(item) for item in items)
         return [item for item in formatted_items if item is not None]
 
     def get_by_name(self, cluster: str, namespace: str, name: str):
-        item = self.get_collection().find_one({"name": name, "namespace": namespace, "cluster": cluster}, {"_id": 0})
+        item = self.get_collection().find_one(
+            {"name": name, "namespace": namespace, "cluster": cluster}, {"_id": 0}
+        )
         return self._format_to_pod(item)
 
     def get_by_namespace(self, cluster: str, namespace: str):
-        items = self.get_collection().find({"namespace": namespace, "cluster": cluster}, {"_id": 0})
+        items = self.get_collection().find(
+            {"namespace": namespace, "cluster": cluster}, {"_id": 0}
+        )
         formatted_items = (self._format_to_pod(item) for item in items)
         return [item for item in formatted_items if item is not None]
 
@@ -39,7 +43,7 @@ class PodClient(DatabaseClient):
     def _format_to_pod(self, item):
         if item is None:
             return None
-            
+
         if "_id" in item:
             item["_id"] = str(item["_id"])
 

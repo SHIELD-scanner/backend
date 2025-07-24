@@ -1,7 +1,10 @@
 """Unit tests for SBOM API endpoints."""
+
+from unittest.mock import Mock
+
 import pytest
-from fastapi.testclient import TestClient
-from unittest.mock import Mock, patch
+
+from app.api.sbom import get_sbom_client
 from app.models.sbom import SBOM
 
 
@@ -18,60 +21,94 @@ class TestSBOMAPI:
         """Test GET /sbom/ with no filters."""
         mock_sboms = [
             SBOM(uid="sbom1", namespace="ns1", cluster="cluster1"),
-            SBOM(uid="sbom2", namespace="ns2", cluster="cluster2")
+            SBOM(uid="sbom2", namespace="ns2", cluster="cluster2"),
         ]
         mock_client_dependency.get_all.return_value = mock_sboms
-        
-        with patch('app.api.sbom.get_sbom_client', return_value=mock_client_dependency):
+
+        # Override the dependency
+        client.app.dependency_overrides[get_sbom_client] = (
+            lambda: mock_client_dependency
+        )
+
+        try:
             response = client.get("/sbom/")
-        
+        finally:
+            # Clean up the override
+            client.app.dependency_overrides.clear()
+
         assert response.status_code == 200
         data = response.json()
         assert len(data) == 2
         assert data[0]["uid"] == "sbom1"
         assert data[1]["uid"] == "sbom2"
-        mock_client_dependency.get_all.assert_called_once_with(namespace=None, cluster=None)
+        mock_client_dependency.get_all.assert_called_once_with(
+            namespace=None, cluster=None
+        )
 
     def test_list_sbom_with_namespace_filter(self, client, mock_client_dependency):
         """Test GET /sbom/ with namespace filter."""
-        mock_sboms = [
-            SBOM(uid="sbom1", namespace="test-ns", cluster="cluster1")
-        ]
+        mock_sboms = [SBOM(uid="sbom1", namespace="test-ns", cluster="cluster1")]
         mock_client_dependency.get_all.return_value = mock_sboms
-        
-        with patch('app.api.sbom.get_sbom_client', return_value=mock_client_dependency):
+
+        # Override the dependency
+        client.app.dependency_overrides[get_sbom_client] = (
+            lambda: mock_client_dependency
+        )
+
+        try:
             response = client.get("/sbom/?namespace=test-ns")
-        
+        finally:
+            # Clean up the override
+            client.app.dependency_overrides.clear()
+
         assert response.status_code == 200
         data = response.json()
         assert len(data) == 1
         assert data[0]["namespace"] == "test-ns"
-        mock_client_dependency.get_all.assert_called_once_with(namespace="test-ns", cluster=None)
+        mock_client_dependency.get_all.assert_called_once_with(
+            namespace="test-ns", cluster=None
+        )
 
     def test_list_sbom_with_cluster_filter(self, client, mock_client_dependency):
         """Test GET /sbom/ with cluster filter."""
-        mock_sboms = [
-            SBOM(uid="sbom1", namespace="ns1", cluster="test-cluster")
-        ]
+        mock_sboms = [SBOM(uid="sbom1", namespace="ns1", cluster="test-cluster")]
         mock_client_dependency.get_all.return_value = mock_sboms
-        
-        with patch('app.api.sbom.get_sbom_client', return_value=mock_client_dependency):
+
+        # Override the dependency
+        client.app.dependency_overrides[get_sbom_client] = (
+            lambda: mock_client_dependency
+        )
+
+        try:
             response = client.get("/sbom/?cluster=test-cluster")
-        
+        finally:
+            # Clean up the override
+            client.app.dependency_overrides.clear()
+
         assert response.status_code == 200
         data = response.json()
         assert len(data) == 1
         assert data[0]["cluster"] == "test-cluster"
-        mock_client_dependency.get_all.assert_called_once_with(namespace=None, cluster="test-cluster")
+        mock_client_dependency.get_all.assert_called_once_with(
+            namespace=None, cluster="test-cluster"
+        )
 
     def test_show_sbom_found(self, client, mock_client_dependency):
         """Test GET /sbom/{uid} when SBOM exists."""
         mock_sbom = SBOM(uid="test-sbom", namespace="test-ns", cluster="test-cluster")
         mock_client_dependency.get_by_uid.return_value = mock_sbom
-        
-        with patch('app.api.sbom.get_sbom_client', return_value=mock_client_dependency):
+
+        # Override the dependency
+        client.app.dependency_overrides[get_sbom_client] = (
+            lambda: mock_client_dependency
+        )
+
+        try:
             response = client.get("/sbom/test-sbom")
-        
+        finally:
+            # Clean up the override
+            client.app.dependency_overrides.clear()
+
         assert response.status_code == 200
         data = response.json()
         assert data["uid"] == "test-sbom"
@@ -82,10 +119,18 @@ class TestSBOMAPI:
     def test_show_sbom_not_found(self, client, mock_client_dependency):
         """Test GET /sbom/{uid} when SBOM doesn't exist."""
         mock_client_dependency.get_by_uid.return_value = None
-        
-        with patch('app.api.sbom.get_sbom_client', return_value=mock_client_dependency):
+
+        # Override the dependency
+        client.app.dependency_overrides[get_sbom_client] = (
+            lambda: mock_client_dependency
+        )
+
+        try:
             response = client.get("/sbom/nonexistent-sbom")
-        
+        finally:
+            # Clean up the override
+            client.app.dependency_overrides.clear()
+
         assert response.status_code == 404
         data = response.json()
         assert data["detail"] == "SBOM not found"
@@ -94,10 +139,18 @@ class TestSBOMAPI:
     def test_list_sbom_empty_result(self, client, mock_client_dependency):
         """Test GET /sbom/ with empty result."""
         mock_client_dependency.get_all.return_value = []
-        
-        with patch('app.api.sbom.get_sbom_client', return_value=mock_client_dependency):
+
+        # Override the dependency
+        client.app.dependency_overrides[get_sbom_client] = (
+            lambda: mock_client_dependency
+        )
+
+        try:
             response = client.get("/sbom/")
-        
+        finally:
+            # Clean up the override
+            client.app.dependency_overrides.clear()
+
         assert response.status_code == 200
         data = response.json()
         assert data == []
@@ -106,10 +159,18 @@ class TestSBOMAPI:
         """Test that SBOM acronym naming is preserved in API responses."""
         mock_sbom = SBOM(uid="test-sbom", namespace="test-ns", cluster="test-cluster")
         mock_client_dependency.get_by_uid.return_value = mock_sbom
-        
-        with patch('app.api.sbom.get_sbom_client', return_value=mock_client_dependency):
+
+        # Override the dependency
+        client.app.dependency_overrides[get_sbom_client] = (
+            lambda: mock_client_dependency
+        )
+
+        try:
             response = client.get("/sbom/test-sbom")
-        
+        finally:
+            # Clean up the override
+            client.app.dependency_overrides.clear()
+
         assert response.status_code == 200
         # Verify the response structure matches our SBOM model
         data = response.json()
@@ -119,12 +180,18 @@ class TestSBOMAPI:
 
     def test_dependency_injection_working(self, client):
         """Test that dependency injection is properly configured."""
-        with patch('app.api.sbom.get_sbom_client') as mock_dep:
-            mock_client = Mock()
-            mock_client.get_all.return_value = []
-            mock_dep.return_value = mock_client
-            
+        mock_client = Mock()
+        mock_client.get_all.return_value = []
+
+        # Override the dependency
+        client.app.dependency_overrides[get_sbom_client] = lambda: mock_client
+
+        try:
             response = client.get("/sbom/")
-            
-            assert response.status_code == 200
-            mock_dep.assert_called_once()
+        finally:
+            # Clean up the override
+            client.app.dependency_overrides.clear()
+
+        assert response.status_code == 200
+        # Verify the mock was called
+        mock_client.get_all.assert_called_once()

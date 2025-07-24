@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, Query, Depends
+from fastapi import APIRouter, Depends, Query
 
 from app.core.old_vulnerabilityClient import VulnerabilityClient
 from app.core.podClient import PodClient
@@ -22,10 +22,14 @@ def get_pod_client() -> PodClient:
 def sidebar(
     cluster: Optional[str] = Query(None),
     namespace: Optional[str] = Query(None),
-    vulnerability_db: VulnerabilityClient = Depends(get_vulnerability_client)
+    vulnerability_db: VulnerabilityClient = Depends(get_vulnerability_client),
 ):
     """List all vulnerabilities in the cluster."""
-    return {"vulnerability_total": len(vulnerability_db.get_all(cluster=cluster, namespace=namespace))}
+    return {
+        "vulnerability_total": len(
+            vulnerability_db.get_all(cluster=cluster, namespace=namespace)
+        )
+    }
 
 
 @router.get("/dashboard", response_model=dict)
@@ -33,7 +37,7 @@ def dashboard(
     cluster: Optional[str] = Query(None),
     namespace: Optional[str] = Query(None),
     vulnerability_db: VulnerabilityClient = Depends(get_vulnerability_client),
-    pod_db: PodClient = Depends(get_pod_client)
+    pod_db: PodClient = Depends(get_pod_client),
 ):
     """List all vulnerabilities in the cluster."""
     items = vulnerability_db.get_all(cluster=cluster, namespace=namespace)

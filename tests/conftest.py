@@ -1,9 +1,11 @@
 """Test configuration and fixtures."""
+
 import os
-import pytest
-from unittest.mock import Mock, MagicMock
-from fastapi.testclient import TestClient
+from unittest.mock import Mock
+
 import mongomock
+import pytest
+from fastapi.testclient import TestClient
 
 # Set test environment variables
 os.environ["MONGODB_DB"] = "shield_test"
@@ -39,7 +41,7 @@ def sample_exposed_secret():
     return {
         "_uid": "test-uid-123",
         "_namespace": "test-namespace",
-        "_cluster": "test-cluster"
+        "_cluster": "test-cluster",
     }
 
 
@@ -48,8 +50,8 @@ def sample_sbom():
     """Sample SBOM data for testing."""
     return {
         "_uid": "sbom-uid-123",
-        "_namespace": "test-namespace", 
-        "_cluster": "test-cluster"
+        "_namespace": "test-namespace",
+        "_cluster": "test-cluster",
     }
 
 
@@ -60,7 +62,7 @@ def sample_pod():
         "name": "test-pod",
         "namespace": "test-namespace",
         "cluster": "test-cluster",
-        "_uid": "pod-uid-123"
+        "_uid": "pod-uid-123",
     }
 
 
@@ -70,7 +72,7 @@ def sample_namespace():
     return {
         "_cluster": "test-cluster",
         "_name": "test-namespace",
-        "_uid": "namespace-uid-123"
+        "_uid": "namespace-uid-123",
     }
 
 
@@ -90,15 +92,11 @@ def sample_vulnerability():
                         "resource": "test-package",
                         "installedVersion": "1.0.0",
                         "fixedVersion": "1.0.1",
-                        "title": "Test vulnerability"
+                        "title": "Test vulnerability",
                     }
                 ],
-                "artifact": {
-                    "repository": "test-repo"
-                }
+                "artifact": {"repository": "test-repo"},
             },
-            "metadata": {
-                "uid": "vuln-uid-123"
-            }
-        }
+            "metadata": {"uid": "vuln-uid-123"},
+        },
     }

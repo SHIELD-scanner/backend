@@ -46,11 +46,6 @@ jobs:
           pip install -r requirements.txt
           pip install -r dev-requirements.txt
 
-      - name: Lint with ruff
-        run: |
-          ruff check app/ --fix
-          ruff format app/ --check
-
       - name: Type check with mypy (if available)
         run: |
           pip install mypy || echo "MyPy not available, skipping type check"

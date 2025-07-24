@@ -1,10 +1,9 @@
 """Unit tests for SBOM model."""
-import pytest
-from pydantic import ValidationError
 from app.models.sbom import SBOM
 
 
 class TestSBOM:
+
     """Test cases for SBOM model."""
 
     def test_sbom_creation_with_all_fields(self):
