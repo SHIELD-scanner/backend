@@ -6,14 +6,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.application import router as application_router
+from app.api.exposedsecret import router as exposedsecret_router
 from app.api.health import router as health_router
-from app.api.sentry import router as sentry_router
 from app.api.namespace import router as namespace_router
 from app.api.pod import router as pod_router
-from app.api.vulnerability import router as vulnerability_router
-from app.api.vulnerability import router as vulnerability_router
 from app.api.sbom import router as sbom_router
-from app.api.exposedsecret import router as exposedsecret_router
+from app.api.sentry import router as sentry_router
+from app.api.vulnerability import router as vulnerability_router
 from app.api.vulnerability_old import router as vulnerability_old_router
 
 # Load environment variables first
