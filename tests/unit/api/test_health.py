@@ -7,6 +7,7 @@ from app.main import app
 
 
 class TestHealthAPI:
+
     """Test class for health API endpoints."""
 
     @pytest.fixture

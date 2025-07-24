@@ -15,6 +15,7 @@ from app.main import app
 
 
 class TestAPIIntegration:
+
     """Integration tests for the full API."""
 
     @pytest.fixture

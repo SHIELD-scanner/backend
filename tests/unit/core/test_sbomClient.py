@@ -10,6 +10,7 @@ from app.models.sbom import SBOM
 
 
 class TestSbomClient:
+
     """Test cases for SbomClient."""
 
     @pytest.fixture

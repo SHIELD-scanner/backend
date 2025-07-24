@@ -9,6 +9,7 @@ from app.models.sbom import SBOM
 
 
 class TestSBOMAPI:
+
     """Test cases for SBOM API endpoints."""
 
     @pytest.fixture

@@ -10,6 +10,7 @@ from app.models.exposedsecret import ExposedSecret
 
 
 class TestExposedsecretClient:
+
     """Test cases for ExposedsecretClient."""
 
     @pytest.fixture

@@ -7,6 +7,7 @@ from app.models.namespace import Namespace
 
 
 class TestNamespaceClient:
+
     """Test class for NamespaceClient."""
 
     def test_format_to_namespace_method(self):

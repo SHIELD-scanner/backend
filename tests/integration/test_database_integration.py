@@ -20,6 +20,7 @@ from app.models.sbom import SBOM
 
 
 class TestDatabaseIntegration:
+
     """Integration tests for database operations."""
 
     @pytest.fixture

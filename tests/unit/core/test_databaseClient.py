@@ -6,6 +6,7 @@ from app.core.databaseClient import DatabaseClient
 
 
 class TestDatabaseClient:
+
     """Test class for DatabaseClient base class."""
 
     @patch("app.core.databaseClient.MongoClient")

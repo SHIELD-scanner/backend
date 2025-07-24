@@ -9,6 +9,7 @@ from app.models.exposedsecret import ExposedSecret
 
 
 class TestExposedSecretAPI:
+
     """Test cases for ExposedSecret API endpoints."""
 
     @pytest.fixture

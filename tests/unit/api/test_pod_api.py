@@ -12,6 +12,7 @@ from app.models.pod import Pod
 
 
 class TestPodAPI:
+
     """Test class for pod API endpoints."""
 
     @pytest.fixture
@@ -247,7 +248,7 @@ class TestPodAPI:
             # The API currently doesn't have error handling, so the exception propagates
             # This test verifies that the mock is working correctly
             with pytest.raises(Exception, match="Database connection failed"):
-                response = client.get("/pods")
+                client.get("/pods")
         finally:
             # Clean up the override
             client.app.dependency_overrides.clear()

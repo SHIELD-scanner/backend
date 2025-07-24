@@ -10,6 +10,7 @@ from app.models.pod import Pod
 
 
 class TestPodClient:
+
     """Test cases for PodClient."""
 
     @pytest.fixture

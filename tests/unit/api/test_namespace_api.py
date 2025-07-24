@@ -12,6 +12,7 @@ from app.models.namespace import Namespace
 
 
 class TestNamespaceAPI:
+
     """Test class for namespace API endpoints."""
 
     @pytest.fixture
@@ -192,7 +193,7 @@ class TestNamespaceAPI:
             # The API currently doesn't have error handling, so the exception propagates
             # This test verifies that the mock is working correctly
             with pytest.raises(Exception, match="Database connection failed"):
-                response = client.get("/namespaces")
+                client.get("/namespaces")
         finally:
             # Clean up the override
             client.app.dependency_overrides.clear()

@@ -1,7 +1,8 @@
 """Tests for application API module."""
 
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
 from fastapi.testclient import TestClient
 
 from app.api.application import get_vulnerability_client
@@ -9,6 +10,7 @@ from app.main import app
 
 
 class TestApplicationAPI:
+
     """Test class for application API endpoints."""
 
     @pytest.fixture
