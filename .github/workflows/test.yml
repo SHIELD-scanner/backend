@@ -52,13 +52,13 @@ jobs:
           mypy app/ || echo "Type checking completed with warnings"
         continue-on-error: true
 
-      - name: Run unit tests with coverage
+      - name: Run unit tests
         env:
           MONGODB_URL: mongodb://localhost:27017
           MONGODB_DB: shield_test
           SENTRY_DSN: ""
         run: |
-          pytest tests/unit/ -v --tb=short --cov=app --cov-report=xml --cov-report=term-missing
+          pytest tests/unit/ --tb=short
 
       - name: Run integration tests
         env:
