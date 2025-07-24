@@ -11,10 +11,13 @@ from app.api.sentry import router as sentry_router
 from app.api.namespace import router as namespace_router
 from app.api.pod import router as pod_router
 from app.api.vulnerability import router as vulnerability_router
+from app.api.vulnerability import router as vulnerability_router
+from app.api.sbom import router as sbom_router
+from app.api.exposedsecret import router as exposedsecret_router
 from app.api.vulnerability_old import router as vulnerability_old_router
 
 # Load environment variables first
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
 
 # Initialize Sentry after loading environment variables
 sentry_dsn = os.getenv("SENTRY_DSN")
@@ -59,6 +62,9 @@ app.include_router(
 app.include_router(
     vulnerability_router, prefix="/vulnerabilities", tags=["vulnerabilities"]
 )
+
+app.include_router(sbom_router, prefix="/sbom", tags=["sbom"])
+app.include_router(exposedsecret_router, prefix="/exposedsecrets", tags=["exposedsecrets"])
 
 app.include_router(pod_router, prefix="/pods", tags=["pods"])
 app.include_router(application_router, prefix="/application", tags=["application"])
