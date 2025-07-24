@@ -77,7 +77,7 @@ python-json-logger==3.3.0
     # via kopf
 pyyaml==6.0.2
     # via kopf
-ruff==0.12.4
+ruff==0.12.5
     # via shield-backend (pyproject.toml)
 sentry-sdk==2.33.2
     # via shield-backend (pyproject.toml)
