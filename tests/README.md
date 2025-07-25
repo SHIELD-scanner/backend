@@ -185,7 +185,7 @@ Tests are automatically run in GitHub Actions on:
 
 The CI pipeline includes:
 
-- Python 3.11, 3.12, and 3.13 testing
+- Python  3.13 testing
 - Code linting with ruff
 - Security scanning with bandit
 - Docker image building and testing
