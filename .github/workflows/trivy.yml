@@ -17,9 +17,9 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.32.0
         with:
-          image-ref: 'ghcr.io/shield-scanner/shield-backend/shield-backend:${{ github.sha }}'
-          format: 'table'
-          exit-code: '1'
+          image-ref: "ghcr.io/shield-scanner/shield-backend/shield-backend:${{ github.sha }}"
+          format: "table"
+          exit-code: "1"
           ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"

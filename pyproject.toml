@@ -17,13 +17,25 @@ dependencies = [
 dev = [
   "black",
   "ruff",
-  "validate-pyproject"
+  "validate-pyproject",
+  "pytest>=7.0.0",
+  "pytest-asyncio>=0.20.0",
+  "httpx>=0.24.0",
+  "pytest-mock>=3.10.0",
+  "mongomock>=4.1.0",
+  "pytest-cov>=4.0.0"
 ]
 
 dev-dependencies = [
   "black",
   "ruff", 
-  "validate-pyproject"
+  "validate-pyproject",
+  "pytest",
+  "pytest-asyncio",
+  "httpx",
+  "pytest-mock",
+  "mongomock",
+  "pytest-cov"
 ]
 
 [build-system]
@@ -45,4 +57,4 @@ line-length = 120
 # - flake8-bugbear ("B")
 # - Isort ("I")
 select = ["E", "F", "D", "B", "I"]
-ignore = ["D100","D101","D102","D103","D104","D107","D211", "D213", "D400", "D415"]
+ignore = ["D100","D101","D102","D103","D104","D107","D211", "D213", "D400", "D415", "B008"]

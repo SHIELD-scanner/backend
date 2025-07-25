@@ -1,31 +1,48 @@
 from typing import Optional
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 
-from app.core.old_vulnerabilityClient import VulnerabilityClient as Vulnerabilitydb
-from app.core.podClient import PodClient as PodClient
+from app.core.old_vulnerabilityClient import VulnerabilityClient
+from app.core.podClient import PodClient
 
 router = APIRouter()
+
+
+def get_vulnerability_client() -> VulnerabilityClient:
+    """Dependency to get VulnerabilityClient instance."""
+    return VulnerabilityClient()
+
+
+def get_pod_client() -> PodClient:
+    """Dependency to get PodClient instance."""
+    return PodClient()
 
 
 @router.get("/sidebar", response_model=dict)
 def sidebar(
     cluster: Optional[str] = Query(None),
     namespace: Optional[str] = Query(None),
+    vulnerability_db: VulnerabilityClient = Depends(get_vulnerability_client),
 ):
     """List all vulnerabilities in the cluster."""
-    return {"vulnerability_total": len(Vulnerabilitydb().get_all(cluster=cluster, namespace=namespace))}
+    return {
+        "vulnerability_total": len(
+            vulnerability_db.get_all(cluster=cluster, namespace=namespace)
+        )
+    }
 
 
 @router.get("/dashboard", response_model=dict)
 def dashboard(
     cluster: Optional[str] = Query(None),
     namespace: Optional[str] = Query(None),
+    vulnerability_db: VulnerabilityClient = Depends(get_vulnerability_client),
+    pod_db: PodClient = Depends(get_pod_client),
 ):
     """List all vulnerabilities in the cluster."""
-    items = Vulnerabilitydb().get_all(cluster=cluster, namespace=namespace)
+    items = vulnerability_db.get_all(cluster=cluster, namespace=namespace)
 
-    pods = PodClient().get_all(cluster=cluster, namespace=namespace)
+    pods = pod_db.get_all(cluster=cluster, namespace=namespace)
     return {
         "severity_counts": {
             "total": len(items),
