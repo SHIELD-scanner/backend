@@ -1,11 +1,12 @@
 """Pytest plugins for performance and reliability improvements."""
 
-import pytest
 import time
-from unittest.mock import patch
+
+import pytest
 
 
 class TimingPlugin:
+
     """Plugin to track test timing and mark slow tests."""
     
     def __init__(self):
@@ -26,6 +27,7 @@ class TimingPlugin:
 
 
 class DatabaseMockPlugin:
+
     """Plugin to ensure database connections are always mocked."""
     
     @pytest.hookimpl(autouse=True)
