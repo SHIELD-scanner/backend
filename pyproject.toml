@@ -22,7 +22,8 @@ dev = [
   "pytest-asyncio>=0.20.0",
   "httpx>=0.24.0",
   "pytest-mock>=3.10.0",
-  "mongomock>=4.1.0"
+  "mongomock>=4.1.0",
+  "pytest-cov>=4.0.0"
 ]
 
 dev-dependencies = [

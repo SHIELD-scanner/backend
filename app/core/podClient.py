@@ -44,7 +44,4 @@ class PodClient(DatabaseClient):
         if item is None:
             return None
 
-        if "_id" in item:
-            item["_id"] = str(item["_id"])
-
         return Pod(**item)

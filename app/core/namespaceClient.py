@@ -24,9 +24,6 @@ class NamespaceClient(DatabaseClient):
         if item is None:
             return None
 
-        if "_id" in item:
-            item["_id"] = str(item["_id"])
-
         return Namespace(
             cluster=item.get("_cluster", ""),
             name=item.get("_name", ""),
