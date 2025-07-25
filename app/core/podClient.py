@@ -44,4 +44,8 @@ class PodClient(DatabaseClient):
         if item is None:
             return None
 
+        # Convert ObjectId to string for serialization compatibility
+        if "_id" in item:
+            item["_id"] = str(item["_id"])
+
         return Pod(**item)
