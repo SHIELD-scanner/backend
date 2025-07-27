@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Seed script to create a SysAdmin user in the SHIELD backend.
+"""Seed script to create a SysAdmin user in the SHIELD backend.
 
 Usage:
     python seed_admin.py --email admin@example.com --name "Admin User"
@@ -8,9 +7,9 @@ Usage:
 """
 
 import argparse
-import os
 import sys
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file in the app directory
@@ -20,13 +19,12 @@ load_dotenv(dotenv_path=Path(__file__).parent / "app" / ".env")
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
-from app.core.userClient import UserClient
-from app.models.user import User
+# Module imports after path setup (E402 exception for this case)
+from app.core.userClient import UserClient  # noqa: E402
 
 
 def seed_admin_user(email: str, fullname: str, force: bool = False) -> bool:
-    """
-    Seed a SysAdmin user in the database.
+    """Seed a SysAdmin user in the database.
     
     Args:
         email: Admin user email
@@ -35,6 +33,7 @@ def seed_admin_user(email: str, fullname: str, force: bool = False) -> bool:
         
     Returns:
         bool: True if successful, False otherwise
+
     """
     try:
         # Initialize the user client
@@ -60,7 +59,7 @@ def seed_admin_user(email: str, fullname: str, force: bool = False) -> bool:
                 })
                 
                 if updated_user:
-                    print(f"✅ Successfully updated user to SysAdmin!")
+                    print("✅ Successfully updated user to SysAdmin!")
                     print(f"   ID: {updated_user.id}")
                     print(f"   Email: {updated_user.email}")
                     print(f"   Name: {updated_user.fullname}")
@@ -68,10 +67,10 @@ def seed_admin_user(email: str, fullname: str, force: bool = False) -> bool:
                     print(f"   Namespaces: {updated_user.namespaces}")
                     return True
                 else:
-                    print(f"❌ Failed to update user!")
+                    print("❌ Failed to update user!")
                     return False
         else:
-            print(f"🚀 Creating new SysAdmin user...")
+            print("🚀 Creating new SysAdmin user...")
             
             # Create new admin user
             user_data = {
@@ -83,7 +82,7 @@ def seed_admin_user(email: str, fullname: str, force: bool = False) -> bool:
             
             new_user = client.create(user_data)
             
-            print(f"✅ Successfully created SysAdmin user!")
+            print("✅ Successfully created SysAdmin user!")
             print(f"   ID: {new_user.id}")
             print(f"   Email: {new_user.email}")
             print(f"   Name: {new_user.fullname}")
@@ -99,7 +98,7 @@ def seed_admin_user(email: str, fullname: str, force: bool = False) -> bool:
 
 
 def main():
-    """Main function to handle command line arguments and seed admin user."""
+    """Handle command line arguments and seed admin user."""
     parser = argparse.ArgumentParser(
         description="Seed a SysAdmin user in the SHIELD backend database",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -167,7 +166,7 @@ Examples:
         print("❌ Name must be at least 2 characters long!")
         sys.exit(1)
     
-    print(f"\n📝 Creating SysAdmin user:")
+    print("\n📝 Creating SysAdmin user:")
     print(f"   Email: {email}")
     print(f"   Name: {name}")
     print(f"   Force update: {args.force}")
@@ -177,14 +176,14 @@ Examples:
     success = seed_admin_user(email, name, args.force)
     
     if success:
-        print(f"\n🎉 Admin user seeding completed successfully!")
-        print(f"\n📋 Next steps:")
+        print("\n🎉 Admin user seeding completed successfully!")
+        print("\n📋 Next steps:")
         print(f"   1. The user can now log in with email: {email}")
-        print(f"   2. Set up authentication/password system if not already configured")
-        print(f"   3. The user has full system access with role 'SysAdmin'")
+        print("   2. Set up authentication/password system if not already configured")
+        print("   3. The user has full system access with role 'SysAdmin'")
         sys.exit(0)
     else:
-        print(f"\n💥 Admin user seeding failed!")
+        print("\n💥 Admin user seeding failed!")
         sys.exit(1)
 
 

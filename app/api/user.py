@@ -1,17 +1,14 @@
-from typing import List, Optional, Dict, Any
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi.responses import JSONResponse
+from typing import Any, Dict, List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.core.userClient import UserClient
 from app.models.user import (
-    User,
-    Role,
-    CreateUserRequest,
-    UpdateUserRequest,
-    UpdateNamespacesRequest,
-    UserStats,
     BulkUserRequest,
+    CreateUserRequest,
     PasswordResetRequest,
+    UpdateNamespacesRequest,
+    UpdateUserRequest,
 )
 
 router = APIRouter()
@@ -53,7 +50,7 @@ def get_roles(db: UserClient = Depends(get_user_client)):
             detail=error_response(
                 "Internal Server Error", "Failed to fetch roles", 500
             ),
-        )
+        ) from e
 
 
 @router.get("/stats", response_model=Dict[str, Any])
@@ -68,7 +65,7 @@ def get_user_stats(db: UserClient = Depends(get_user_client)):
             detail=error_response(
                 "Internal Server Error", "Failed to fetch user statistics", 500
             ),
-        )
+        ) from e
 
 
 @router.get("/", response_model=Dict[str, Any])
@@ -115,7 +112,7 @@ def list_users(
             detail=error_response(
                 "Internal Server Error", "Failed to fetch users", 500
             ),
-        )
+        ) from e
 
 
 @router.get("/{user_id}", response_model=Dict[str, Any])
@@ -134,11 +131,11 @@ def get_user_by_id(user_id: str, db: UserClient = Depends(get_user_client)):
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500,
             detail=error_response("Internal Server Error", "Failed to fetch user", 500),
-        )
+        ) from None
 
 
 @router.post("/", status_code=201)
@@ -164,14 +161,14 @@ def create_user(
     except ValueError as e:
         raise HTTPException(
             status_code=400, detail=error_response("Validation Error", str(e), 400)
-        )
-    except Exception as e:
+        ) from e
+    except Exception:
         raise HTTPException(
             status_code=500,
             detail=error_response(
                 "Internal Server Error", "Failed to create user", 500
             ),
-        )
+        ) from None
 
 
 @router.put("/{user_id}", response_model=Dict[str, Any])
@@ -211,14 +208,14 @@ def update_user(
     except ValueError as e:
         raise HTTPException(
             status_code=400, detail=error_response("Validation Error", str(e), 400)
-        )
-    except Exception as e:
+        ) from e
+    except Exception:
         raise HTTPException(
             status_code=500,
             detail=error_response(
                 "Internal Server Error", "Failed to update user", 500
             ),
-        )
+        ) from None
 
 
 @router.delete("/{user_id}", response_model=Dict[str, Any])
@@ -262,13 +259,13 @@ def delete_user(user_id: str, db: UserClient = Depends(get_user_client)):
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500,
             detail=error_response(
                 "Internal Server Error", "Failed to delete user", 500
             ),
-        )
+        ) from None
 
 
 @router.patch("/{user_id}/activate", response_model=Dict[str, Any])
@@ -287,13 +284,13 @@ def activate_user(user_id: str, db: UserClient = Depends(get_user_client)):
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500,
             detail=error_response(
                 "Internal Server Error", "Failed to activate user", 500
             ),
-        )
+        ) from None
 
 
 @router.patch("/{user_id}/deactivate", response_model=Dict[str, Any])
@@ -327,13 +324,13 @@ def deactivate_user(user_id: str, db: UserClient = Depends(get_user_client)):
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500,
             detail=error_response(
                 "Internal Server Error", "Failed to deactivate user", 500
             ),
-        )
+        ) from None
 
 
 @router.put("/{user_id}/namespaces", response_model=Dict[str, Any])
@@ -361,14 +358,14 @@ def update_user_namespaces(
     except ValueError as e:
         raise HTTPException(
             status_code=400, detail=error_response("Validation Error", str(e), 400)
-        )
-    except Exception as e:
+        ) from e
+    except Exception:
         raise HTTPException(
             status_code=500,
             detail=error_response(
                 "Internal Server Error", "Failed to update user namespaces", 500
             ),
-        )
+        ) from None
 
 
 @router.patch("/bulk", response_model=Dict[str, Dict[str, int]])
@@ -396,13 +393,13 @@ def bulk_update_users(
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500,
             detail=error_response(
                 "Internal Server Error", "Failed to perform bulk update", 500
             ),
-        )
+        ) from None
 
 
 @router.delete("/bulk", response_model=Dict[str, Dict[str, int]])
@@ -440,13 +437,13 @@ def bulk_delete_users(
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500,
             detail=error_response(
                 "Internal Server Error", "Failed to perform bulk delete", 500
             ),
-        )
+        ) from None
 
 
 @router.get("/{user_id}/activity", response_model=Dict[str, List[Dict[str, Any]]])
@@ -473,13 +470,13 @@ def get_user_activity(
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=500,
             detail=error_response(
                 "Internal Server Error", "Failed to fetch user activity", 500
             ),
-        )
+        ) from None
 
 
 @router.post("/password-reset/request", response_model=Dict[str, Any])
@@ -489,7 +486,7 @@ def request_password_reset(
     """Request password reset for a user."""
     try:
         # Check if user exists
-        user = db.get_by_email(reset_request.email)
+        db.get_by_email(reset_request.email)
 
         # Always return success for security (don't reveal if email exists)
         # In a real implementation, this would send an email with reset instructions
@@ -499,7 +496,7 @@ def request_password_reset(
             "Password reset instructions have been sent to the email address",
         )
 
-    except Exception as e:
+    except Exception:
         # Always return success for security
         return success_response(
             {"status": "sent", "email": reset_request.email},

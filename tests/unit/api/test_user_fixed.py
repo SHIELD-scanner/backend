@@ -1,12 +1,13 @@
+from datetime import UTC, datetime
+from unittest.mock import Mock
+
 import pytest
-from datetime import datetime, UTC
-from unittest.mock import Mock, patch
 from fastapi.testclient import TestClient
 
-from app.main import app
-from app.models.user import User, CreateUserRequest, UpdateUserRequest, Role, UserStats
-from app.core.userClient import UserClient
 from app.api.user import get_user_client
+from app.core.userClient import UserClient
+from app.main import app
+from app.models.user import CreateUserRequest, Role, User, UserStats
 
 
 @pytest.fixture
@@ -52,6 +53,7 @@ def sample_create_request():
 
 
 class TestUserAPI:
+
     """Test cases for user API endpoints."""
 
     def test_get_roles(self, mock_user_client, client):

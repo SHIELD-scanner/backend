@@ -1,11 +1,11 @@
-import pytest
 import os
-from datetime import datetime
+
+import pytest
 from fastapi.testclient import TestClient
 from pymongo import MongoClient
 
-from app.main import app
 from app.core.userClient import UserClient
+from app.main import app
 
 
 @pytest.fixture(scope="session")
@@ -52,6 +52,7 @@ def sample_user_data():
 
 
 class TestUserAPIIntegration:
+
     """Integration tests for user API endpoints."""
 
     def test_user_lifecycle(self, client, user_client):

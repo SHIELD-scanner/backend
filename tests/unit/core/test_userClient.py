@@ -1,17 +1,16 @@
-import pytest
 from datetime import datetime
-from unittest.mock import Mock, patch, MagicMock
-from bson import ObjectId
+from unittest.mock import Mock, patch
 
 from app.core.userClient import UserClient
-from app.models.user import User, Role, UserStats
+from app.models.user import User
 
 
 class TestUserClient:
+
     """Test cases for UserClient."""
 
     def setup_method(self):
-        """Setup test data."""
+        """Set up test data."""
         self.sample_user_data = {
             "id": "user123",
             "email": "test@example.com",
@@ -29,7 +28,7 @@ class TestUserClient:
     def test_init(self, mock_parent_init):
         """Test UserClient initialization."""
         mock_parent_init.return_value = None
-        client = UserClient()
+        UserClient()  # Just test that it can be instantiated
         mock_parent_init.assert_called_once()
 
     @patch("app.core.userClient.UserClient.get_collection")

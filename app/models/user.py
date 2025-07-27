@@ -1,9 +1,11 @@
-from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict
+from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 class Role(BaseModel):
+
     """Role model with permissions."""
 
     id: str
@@ -13,6 +15,7 @@ class Role(BaseModel):
 
 
 class User(BaseModel):
+
     """User model for SHIELD Scanner platform."""
 
     id: str
@@ -85,6 +88,7 @@ class User(BaseModel):
 
 
 class CreateUserRequest(BaseModel):
+
     """Request model for creating a new user."""
 
     email: EmailStr
@@ -117,6 +121,7 @@ class CreateUserRequest(BaseModel):
 
 
 class UpdateUserRequest(BaseModel):
+
     """Request model for updating an existing user."""
 
     email: Optional[EmailStr] = None
@@ -145,6 +150,7 @@ class UpdateUserRequest(BaseModel):
 
 
 class UpdateNamespacesRequest(BaseModel):
+
     """Request model for updating user namespaces."""
 
     namespaces: List[str] = Field(..., min_length=1)
@@ -157,6 +163,7 @@ class UpdateNamespacesRequest(BaseModel):
 
 
 class UserStats(BaseModel):
+
     """User statistics model."""
 
     total: int
@@ -166,12 +173,14 @@ class UserStats(BaseModel):
 
 
 class BulkUserRequest(BaseModel):
+
     """Request model for bulk operations."""
 
     userIds: List[str] = Field(..., min_length=1)
 
 
 class PasswordResetRequest(BaseModel):
+
     """Request model for password reset."""
 
     email: EmailStr

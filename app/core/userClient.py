@@ -1,13 +1,15 @@
 import os
-from typing import List, Optional, Dict, Any
 from datetime import datetime
+from typing import List, Optional
+
 from bson import ObjectId
 
 from app.core.databaseClient import DatabaseClient
-from app.models.user import User, Role, UserStats
+from app.models.user import Role, User, UserStats
 
 
 class UserClient(DatabaseClient):
+
     """Client for managing users in MongoDB."""
 
     def __init__(self):
