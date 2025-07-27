@@ -1,4 +1,4 @@
-.PHONY: install sync run dev clean format lint check docker-build docker-run k8s-deploy k8s-deploy-secure k8s-undeploy k8s-status k8s-logs k8s-port-forward
+.PHONY: install sync run dev clean format lint check docker-build docker-run k8s-deploy k8s-deploy-secure k8s-undeploy k8s-status k8s-logs k8s-port-forward seed-admin
 
 install:
 	pip install -r requirements.txt
@@ -80,3 +80,26 @@ k8s-restart:
 	@echo "🔄 Restarting deployment..."
 	kubectl rollout restart deployment/shield-backend -n shield
 	kubectl rollout status deployment/shield-backend -n shield
+
+# Database seeding commands
+seed-admin:
+	@echo "🛡️  SHIELD Backend - Seeding Admin User"
+	@echo "======================================"
+	@if [ -z "$(EMAIL)" ] || [ -z "$(NAME)" ]; then \
+		echo "❌ Usage: make seed-admin EMAIL=admin@shield.com NAME=\"Admin User\""; \
+		echo "   Optional: Add FORCE=true to update existing user"; \
+		echo ""; \
+		echo "Examples:"; \
+		echo "  make seed-admin EMAIL=admin@shield.com NAME=\"System Administrator\""; \
+		echo "  make seed-admin EMAIL=existing@shield.com NAME=\"Admin User\" FORCE=true"; \
+		exit 1; \
+	fi
+	@if [ "$(FORCE)" = "true" ]; then \
+		.venv/bin/python seed_admin.py --email "$(EMAIL)" --name "$(NAME)" --force; \
+	else \
+		.venv/bin/python seed_admin.py --email "$(EMAIL)" --name "$(NAME)"; \
+	fi
+
+seed-admin-interactive:
+	@echo "🛡️  SHIELD Backend - Interactive Admin Seeding"
+	.venv/bin/python seed_admin.py

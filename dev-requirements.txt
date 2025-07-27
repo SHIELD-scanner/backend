@@ -33,7 +33,11 @@ click==8.2.1
 coverage==7.10.0
     # via pytest-cov
 dnspython==2.7.0
-    # via pymongo
+    # via
+    #   email-validator
+    #   pymongo
+email-validator==2.2.0
+    # via pydantic
 fastapi==0.116.1
     # via
     #   sentry-sdk
@@ -55,6 +59,7 @@ httpx==0.28.1
 idna==3.10
     # via
     #   anyio
+    #   email-validator
     #   httpx
     #   yarl
 iniconfig==2.1.0

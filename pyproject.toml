@@ -10,7 +10,8 @@ dependencies = [
   "pydantic",
   "pymongo",
   "python-dotenv",
-  "sentry-sdk[fastapi]"
+  "sentry-sdk[fastapi]",
+  "pydantic[email]"
 ]
 
 [project.optional-dependencies]
