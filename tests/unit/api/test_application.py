@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 from fastapi.testclient import TestClient
 
-from app.api.application import get_vulnerability_client, get_pod_client
+from app.api.application import get_pod_client, get_vulnerability_client
 from app.main import app
 
 

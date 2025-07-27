@@ -1,11 +1,12 @@
 """Tests for health API module."""
 
-import pytest
-from fastapi.testclient import TestClient
 from unittest.mock import Mock
 
-from app.main import app
+import pytest
+from fastapi.testclient import TestClient
+
 from app.api.health import get_database_client
+from app.main import app
 
 
 class TestHealthAPI:
