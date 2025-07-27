@@ -2,7 +2,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 
-from app.core.old_vulnerabilityClient import VulnerabilityClient
+from app.core.vulnerabilityClient import VulnerabilityClient
 from app.core.podClient import PodClient
 
 router = APIRouter()
