@@ -1,0 +1,403 @@
+import pytest
+from datetime import datetime, UTC
+from unittest.mock import Mock, patch
+from fastapi.testclient import TestClient
+
+from app.main import app
+from app.models.user import User, CreateUserRequest, UpdateUserRequest, Role, UserStats
+from app.core.userClient import UserClient
+from app.api.user import get_user_client
+
+
+@pytest.fixture
+def mock_user_client():
+    """Create a mock user client."""
+    return Mock(spec=UserClient)
+
+
+@pytest.fixture
+def client(mock_user_client):
+    """Create test client with dependency override."""
+    app.dependency_overrides[get_user_client] = lambda: mock_user_client
+    yield TestClient(app)
+    app.dependency_overrides.clear()
+
+
+class TestUserAPI:
+    """Test cases for user API endpoints."""
+
+    @pytest.fixture
+    def sample_user(self):
+        """Sample user for testing."""
+        return User(
+            id="user123",
+            email="test@example.com",
+            fullname="Test User",
+            role="Developer",
+            namespaces=["cluster-dev:development"],
+            createdAt=datetime.now(UTC),
+            lastLogin=None,
+            status="active",
+            mfaEnabled=False,
+            oktaIntegration=False,
+        )
+
+    @pytest.fixture
+    def sample_create_request(self):
+        """Sample create user request."""
+        return CreateUserRequest(
+            email="newuser@example.com",
+            fullname="New User",
+            role="Developer",
+            namespaces=["cluster-dev:development"],
+        )
+
+    def test_get_roles(self, client, mock_user_client):
+        """Test GET /users/roles endpoint."""
+        # Return the actual role structure that the endpoint expects
+        mock_user_client.get_roles.return_value = [
+            Role(
+                id="SysAdmin",
+                name="System Administrator",
+                description="Full system access and user management",
+                permissions=[
+                    "users:*",
+                    "clusters:*",
+                    "namespaces:*",
+                    "system:*",
+                    "vulnerabilities:*",
+                    "sbom:*",
+                    "secrets:*",
+                ],
+            ),
+            Role(
+                id="ClusterAdmin",
+                name="Cluster Administrator",
+                description="Cluster-wide access across all namespaces",
+                permissions=[
+                    "namespaces:*",
+                    "vulnerabilities:*",
+                    "sbom:*",
+                    "secrets:*",
+                ],
+            ),
+            Role(
+                id="Developer",
+                name="Developer",
+                description="Namespace-level access",
+                permissions=["namespaces:assigned"],
+            ),
+        ]
+
+        response = client.get("/users/roles")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert "data" in data
+        # Since the real implementation returns 3 roles, let's test for that
+        assert len(data["data"]) == 3
+        role_ids = [role["id"] for role in data["data"]]
+        assert "SysAdmin" in role_ids
+        assert "ClusterAdmin" in role_ids
+        assert "Developer" in role_ids
+
+    def test_get_user_stats(self, client, mock_user_client):
+        """Test GET /users/stats endpoint."""
+        mock_user_client.get_stats.return_value = UserStats(
+            total=10,
+            active=8,
+            inactive=2,
+            byRole={"Developer": 7, "ClusterAdmin": 2, "SysAdmin": 1},
+        )
+
+        response = client.get("/users/stats")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["data"]["total"] == 10
+        assert data["data"]["active"] == 8
+        assert data["data"]["inactive"] == 2
+
+    def test_list_users(self, client, mock_user_client, sample_user):
+        """Test GET /users endpoint."""
+        mock_user_client.get_all.return_value = ([sample_user], 1)
+
+        response = client.get("/users?page=1&limit=50")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert "data" in data
+        assert "pagination" in data["data"]
+        assert len(data["data"]["users"]) == 1
+        assert data["data"]["users"][0]["email"] == "test@example.com"
+
+    def test_list_users_with_filters(self, client, mock_user_client, sample_user):
+        """Test GET /users endpoint with filters."""
+        mock_user_client.get_all.return_value = ([sample_user], 1)
+
+        response = client.get("/users?role=Developer&status=active&search=test")
+
+        assert response.status_code == 200
+        mock_user_client.get_all.assert_called_once_with(
+            role="Developer",
+            namespace=None,
+            status="active",
+            search="test",
+            page=1,
+            limit=50,
+        )
+
+    def test_get_user_by_id(self, client, mock_user_client, sample_user):
+        """Test GET /users/{user_id} endpoint."""
+        mock_user_client.get_by_id.return_value = sample_user
+
+        response = client.get("/users/user123")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["data"]["id"] == "user123"
+        assert data["data"]["email"] == "test@example.com"
+
+    def test_get_user_by_id_not_found(self, client, mock_user_client):
+        """Test GET /users/{user_id} endpoint when user not found."""
+        mock_user_client.get_by_id.return_value = None
+
+        response = client.get("/users/nonexistent")
+
+        assert response.status_code == 404
+        data = response.json()
+        assert data["detail"]["error"] == "Not Found"
+
+    def test_create_user(self, client, mock_user_client, sample_user, sample_create_request):
+        """Test POST /users endpoint."""
+        mock_user_client.email_exists.return_value = False
+        mock_user_client.create.return_value = sample_user
+
+        response = client.post("/users", json=sample_create_request.model_dump())
+
+        assert response.status_code == 201
+        data = response.json()
+        assert data["message"] == "User created successfully"
+        assert data["data"]["email"] == "test@example.com"
+
+    @patch("app.api.user.get_user_client")
+    def test_create_user_email_conflict(self, mock_get_client):
+        """Test POST /users endpoint with email conflict."""
+        mock_client = Mock(spec=UserClient)
+        mock_client.email_exists.return_value = True
+        mock_get_client.return_value = mock_client
+
+        response = client.post("/users", json=self.sample_create_request.dict())
+
+        assert response.status_code == 409
+        data = response.json()
+        assert data["detail"]["error"] == "Conflict"
+        assert "already in use" in data["detail"]["message"]
+
+    @patch("app.api.user.get_user_client")
+    def test_update_user(self, mock_get_client):
+        """Test PUT /users/{user_id} endpoint."""
+        mock_client = Mock(spec=UserClient)
+        mock_client.get_by_id.return_value = self.sample_user
+        mock_client.email_exists.return_value = False
+
+        updated_user = self.sample_user.copy()
+        updated_user.fullname = "Updated Name"
+        mock_client.update.return_value = updated_user
+        mock_get_client.return_value = mock_client
+
+        update_request = UpdateUserRequest(fullname="Updated Name")
+        response = client.put(
+            "/users/user123", json=update_request.dict(exclude_unset=True)
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["message"] == "User updated successfully"
+
+    @patch("app.api.user.get_user_client")
+    def test_update_user_not_found(self, mock_get_client):
+        """Test PUT /users/{user_id} endpoint when user not found."""
+        mock_client = Mock(spec=UserClient)
+        mock_client.get_by_id.return_value = None
+        mock_get_client.return_value = mock_client
+
+        update_request = UpdateUserRequest(fullname="Updated Name")
+        response = client.put(
+            "/users/nonexistent", json=update_request.dict(exclude_unset=True)
+        )
+
+        assert response.status_code == 404
+        data = response.json()
+        assert data["detail"]["error"] == "Not Found"
+
+    @patch("app.api.user.get_user_client")
+    def test_delete_user(self, mock_get_client):
+        """Test DELETE /users/{user_id} endpoint."""
+        mock_client = Mock(spec=UserClient)
+        mock_client.get_by_id.return_value = self.sample_user
+        mock_client.count_active_sysadmins.return_value = 2  # Enough admins
+        mock_client.delete.return_value = True
+        mock_get_client.return_value = mock_client
+
+        response = client.delete("/users/user123")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["message"] == "User deleted successfully"
+        assert data["data"]["id"] == "user123"
+
+    @patch("app.api.user.get_user_client")
+    def test_delete_last_sysadmin(self, mock_get_client):
+        """Test DELETE /users/{user_id} endpoint preventing deletion of last sysadmin."""
+        sysadmin_user = self.sample_user.copy()
+        sysadmin_user.role = "SysAdmin"
+
+        mock_client = Mock(spec=UserClient)
+        mock_client.get_by_id.return_value = sysadmin_user
+        mock_client.count_active_sysadmins.return_value = 1  # Last admin
+        mock_get_client.return_value = mock_client
+
+        response = client.delete("/users/user123")
+
+        assert response.status_code == 409
+        data = response.json()
+        assert data["detail"]["error"] == "Conflict"
+        assert "last active system administrator" in data["detail"]["message"]
+
+    @patch("app.api.user.get_user_client")
+    def test_activate_user(self, mock_get_client):
+        """Test PATCH /users/{user_id}/activate endpoint."""
+        mock_client = Mock(spec=UserClient)
+        activated_user = self.sample_user.copy()
+        activated_user.status = "active"
+        mock_client.activate_user.return_value = activated_user
+        mock_get_client.return_value = mock_client
+
+        response = client.patch("/users/user123/activate")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["message"] == "User activated successfully"
+        assert data["data"]["status"] == "active"
+
+    @patch("app.api.user.get_user_client")
+    def test_deactivate_user(self, mock_get_client):
+        """Test PATCH /users/{user_id}/deactivate endpoint."""
+        mock_client = Mock(spec=UserClient)
+        mock_client.get_by_id.return_value = self.sample_user
+        mock_client.count_active_sysadmins.return_value = 2  # Enough admins
+
+        deactivated_user = self.sample_user.copy()
+        deactivated_user.status = "inactive"
+        mock_client.deactivate_user.return_value = deactivated_user
+        mock_get_client.return_value = mock_client
+
+        response = client.patch("/users/user123/deactivate")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["message"] == "User deactivated successfully"
+
+    @patch("app.api.user.get_user_client")
+    def test_update_user_namespaces(self, mock_get_client):
+        """Test PUT /users/{user_id}/namespaces endpoint."""
+        mock_client = Mock(spec=UserClient)
+        updated_user = self.sample_user.copy()
+        updated_user.namespaces = ["cluster-prod:production"]
+        mock_client.update_namespaces.return_value = updated_user
+        mock_get_client.return_value = mock_client
+
+        response = client.put(
+            "/users/user123/namespaces",
+            json={"namespaces": ["cluster-prod:production"]},
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["message"] == "User namespaces updated successfully"
+        assert data["data"]["namespaces"] == ["cluster-prod:production"]
+
+    def test_create_user_validation_error(self):
+        """Test POST /users endpoint with validation errors."""
+        invalid_request = {
+            "email": "invalid-email",
+            "fullname": "A",  # Too short
+            "role": "InvalidRole",
+            "namespaces": [],  # Empty
+        }
+
+        response = client.post("/users", json=invalid_request)
+
+        assert response.status_code == 422  # Pydantic validation error
+
+    def test_user_model_namespace_validation(self):
+        """Test User model namespace validation."""
+        # Valid namespaces
+        valid_namespaces = [
+            ["*"],
+            ["cluster-dev:development"],
+            ["cluster-prod:all"],
+            ["cluster-a:ns1", "cluster-b:all", "cluster-c:ns2"],
+        ]
+
+        for namespaces in valid_namespaces:
+            user_data = self.sample_user.dict()
+            user_data["namespaces"] = namespaces
+            user = User(**user_data)  # Should not raise
+            assert user.namespaces == namespaces
+
+        # Invalid namespaces
+        invalid_namespaces = [
+            ["invalid-format"],
+            ["cluster:"],
+            [":namespace"],
+            ["cluster::namespace"],
+            [""],
+        ]
+
+        for namespaces in invalid_namespaces:
+            user_data = self.sample_user.dict()
+            user_data["namespaces"] = namespaces
+            with pytest.raises(ValueError):
+                User(**user_data)
+
+    @patch("app.api.user.get_user_client")
+    def test_password_reset_request(self, mock_get_client):
+        """Test POST /users/password-reset/request endpoint."""
+        mock_client = Mock(spec=UserClient)
+        mock_client.get_by_email.return_value = self.sample_user
+        mock_get_client.return_value = mock_client
+
+        response = client.post(
+            "/users/password-reset/request", json={"email": "test@example.com"}
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert (
+            data["message"]
+            == "Password reset instructions have been sent to the email address"
+        )
+        assert data["data"]["status"] == "sent"
+
+    @patch("app.api.user.get_user_client")
+    def test_get_user_activity(self, mock_get_client):
+        """Test GET /users/{user_id}/activity endpoint."""
+        mock_client = Mock(spec=UserClient)
+        mock_client.get_by_id.return_value = self.sample_user
+        mock_client.get_user_activity.return_value = [
+            {
+                "timestamp": datetime.utcnow(),
+                "action": "user_created",
+                "details": "User Test User was created",
+            }
+        ]
+        mock_get_client.return_value = mock_client
+
+        response = client.get("/users/user123/activity")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data["data"]) == 1
+        assert data["data"][0]["action"] == "user_created"

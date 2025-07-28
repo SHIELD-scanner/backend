@@ -23,7 +23,11 @@ click==8.2.1
     #   kopf
     #   uvicorn
 dnspython==2.7.0
-    # via pymongo
+    # via
+    #   email-validator
+    #   pymongo
+email-validator==2.2.0
+    # via pydantic
 fastapi==0.116.1
     # via
     #   sentry-sdk
@@ -37,6 +41,7 @@ h11==0.16.0
 idna==3.10
     # via
     #   anyio
+    #   email-validator
     #   yarl
 iso8601==2.1.0
     # via kopf
@@ -50,7 +55,7 @@ propcache==0.3.2
     # via
     #   aiohttp
     #   yarl
-pydantic==2.11.7
+pydantic[email]==2.11.7
     # via
     #   fastapi
     #   shield-backend (pyproject.toml)

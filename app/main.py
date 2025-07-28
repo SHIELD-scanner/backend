@@ -12,6 +12,7 @@ from app.api.namespace import router as namespace_router
 from app.api.pod import router as pod_router
 from app.api.sbom import router as sbom_router
 from app.api.sentry import router as sentry_router
+from app.api.user import router as user_router
 from app.api.vulnerability import router as vulnerability_router
 from app.api.vulnerability_old import router as vulnerability_old_router
 
@@ -63,9 +64,12 @@ app.include_router(
 )
 
 app.include_router(sbom_router, prefix="/sbom", tags=["sbom"])
-app.include_router(exposedsecret_router, prefix="/exposedsecrets", tags=["exposedsecrets"])
+app.include_router(
+    exposedsecret_router, prefix="/exposedsecrets", tags=["exposedsecrets"]
+)
 
 app.include_router(pod_router, prefix="/pods", tags=["pods"])
 app.include_router(application_router, prefix="/application", tags=["application"])
+app.include_router(user_router, prefix="/users", tags=["users"])
 app.include_router(health_router, prefix="/health", tags=["health"])
 app.include_router(sentry_router, prefix="/sentry", tags=["sentry"])
