@@ -123,7 +123,7 @@ pytz==2025.2
     # via mongomock
 pyyaml==6.0.2
     # via kopf
-ruff==0.12.5
+ruff==0.12.7
     # via shield-backend (pyproject.toml)
 sentinels==1.0.0
     # via mongomock
